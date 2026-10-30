@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ASTROVERSE</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--bg:#05060f;--panel:rgba(255,255,255,.05);--line:rgba(160,150,255,.2);--tx:#e8eaff;--mu:#9aa0c8;--ac:#8b7cff;--ac2:#3ab0ff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#05060f;--tx:#e8eaff}}
+:root[data-theme="dark"]{--bg:#05060f;--tx:#e8eaff}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(ellipse at 20% 0,#1a1450 0,var(--bg) 55%) var(--bg);color:var(--tx);font-family:Inter,system-ui,Segoe UI,Tahoma,Arial,sans-serif;line-height:1.5;min-height:100vh}
+a{color:inherit;text-decoration:none}
+nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:14px 5vw;position:sticky;top:env(safe-area-inset-top,0px);backdrop-filter:blur(12px);background:rgba(5,6,15,.7);z-index:5;border-bottom:1px solid var(--line)}
+.logo{font-weight:700;letter-spacing:.3em;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;color:transparent}
+.lk{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.lk a{color:var(--mu);font-size:.9rem}.lk a:hover{color:var(--tx)}
+.lb{background:none;border:1px solid var(--line);color:var(--mu);padding:3px 9px;border-radius:8px;cursor:pointer}.lb.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+section{padding:36px 5vw;max-width:1200px;margin:auto}
+h1{font-size:clamp(2rem,6vw,3.8rem);margin:0 0 8px;line-height:1.1}h2{font-weight:600;margin:0 0 18px}h3{margin:6px 0}
+.sub{color:var(--mu)}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
+@media(max-width:800px){.hero{grid-template-columns:1fr}}
+canvas{width:100%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#0e0b2e,transparent 70%)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;backdrop-filter:blur(8px);transition:.25s}
+a.card:hover{transform:translateY(-4px);border-color:var(--ac);box-shadow:0 0 28px rgba(139,124,255,.25)}
+.card img{width:100%;border-radius:10px;margin-bottom:8px}
+.ic{font-size:1.8rem}.big{font-size:1.9rem;font-weight:700;font-variant-numeric:tabular-nums}
+.lbl{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.12em}
+.cd{display:flex;gap:12px}.cd div{text-align:center}.cd .big{display:block}
+button,input,textarea,select{font:inherit;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 10px;max-width:100%}
+.pb{cursor:pointer;background:linear-gradient(90deg,var(--ac),var(--ac2));border:0;color:#fff;margin:3px}
+.dg{background:#7a1f3a}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tabs .pb{opacity:.6}.tabs .pb.on{opacity:1}
+.adm input,.adm textarea,.adm select{margin:3px 3px 3px 0;width:100%}
+.adm .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px}
+.adm{border-top:3px solid var(--ac)}.adm .card{margin-bottom:14px}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:2px 12px;font-size:.8rem;color:var(--mu)}
+iframe{width:100%;height:70vh;border:1px solid var(--line);border-radius:14px;background:#000}
+.pre{white-space:pre-line}
+.v3{position:relative;width:100%;height:60vh;min-height:320px;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:14px 0;touch-action:none}.v3 canvas{width:100%!important;height:100%!important;aspect-ratio:auto;border-radius:0;background:none;display:block}.v3 canvas.mc{width:260px!important;height:260px!important;margin:10px auto}.pn{position:absolute;top:10px;inset-inline-start:10px;background:rgba(5,6,15,.85);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.85rem}
+footer{text-align:center;color:var(--mu);padding:36px;font-size:.8rem}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="state" type="application/json">{}</script>
+<script>
+const U={en:{home:"Home",events:"Events",lab:"Astronomy Lab",admin:"Admin",clock:"Live astronomy clock",explore:"Explore the Universe",upcoming:"Upcoming events",moon:"Moon phase",rise:"Sunrise",set:"Sunset",next:"Next event",days:"Days",hrs:"Hrs",min:"Min",sec:"Sec",illum:"illuminated",none:"None scheduled",back:"Back",login:"Log in",logout:"Log out",pass:"Password",wrong:"Wrong password",site:"Site",cats:"Categories",evs:"Events",labs:"Lab projects",loc:"Location",add:"Add",del:"Delete",imp:"Import JSON",reset:"Reset everything (click twice)",desc:"Description",url:"Project URL (https)",open:"Open in new tab",empty:"Nothing here yet.",note:"Changes are saved to the server automatically.",lt:"Title",ls:"Subtitle",show:"Show on homepage",accent:"Accent color",cover:"Cover image",all:"All events",nolab:"No projects published yet.",bad:"Invalid or missing URL.",date:"Date",cat:"Category",uni:"3D Universe",mph:"Moon simulator",srch:"Search…",favs:"Favorites",pgs:"Pages",dia:"Diameter",dst:"Distance from Sun",per:"Orbital period",yr:"years",dy:"days",pub:"Publish to everyone",pubok:"Only the owner can publish.",foot:"Footer text",logo:"Logo text",no3:"None",sol:"Solar system",mon:"Moon",res:"results",drag:"Drag to rotate · scroll to zoom · tap a planet",today:"Today",m3:"3D models",upl:"Upload .glb file (max 6 MB)",mur:"…or model URL (https, .glb)",scl:"Scale",rot:"Auto-rotate",lib:"3D library",upok:"Uploaded",nomod:"No 3D models yet."},
+fr:{home:"Accueil",events:"Événements",lab:"Labo d’astronomie",admin:"Admin",clock:"Horloge astronomique en direct",explore:"Explorer l’Univers",upcoming:"Événements à venir",moon:"Phase de la Lune",rise:"Lever du soleil",set:"Coucher du soleil",next:"Prochain événement",days:"Jours",hrs:"H",min:"Min",sec:"Sec",illum:"illuminée",none:"Aucun prévu",back:"Retour",login:"Connexion",logout:"Déconnexion",pass:"Mot de passe",wrong:"Mot de passe incorrect",site:"Site",cats:"Catégories",evs:"Événements",labs:"Projets du labo",loc:"Position",add:"Ajouter",del:"Supprimer",imp:"Importer JSON",reset:"Tout réinitialiser (cliquer 2 fois)",desc:"Description",url:"URL du projet (https)",open:"Ouvrir dans un nouvel onglet",empty:"Rien pour le moment.",note:"Les modifications sont enregistrées automatiquement sur le serveur.",lt:"Titre",ls:"Sous-titre",show:"Afficher sur l’accueil",accent:"Couleur d’accent",cover:"Image de couverture",all:"Tous les événements",nolab:"Aucun projet publié.",bad:"URL invalide ou manquante.",date:"Date",cat:"Catégorie",uni:"Univers 3D",mph:"Simulateur lunaire",srch:"Rechercher…",favs:"Favoris",pgs:"Pages",dia:"Diamètre",dst:"Distance au Soleil",per:"Période orbitale",yr:"ans",dy:"jours",pub:"Publier pour tous",pubok:"Réservé au propriétaire.",foot:"Texte du pied de page",logo:"Texte du logo",no3:"Aucune",sol:"Système solaire",mon:"Lune",res:"résultats",drag:"Glisser pour tourner · molette pour zoomer · toucher une planète",today:"Aujourd’hui",m3:"Modèles 3D",upl:"Téléverser un .glb (max 6 Mo)",mur:"…ou URL du modèle (https, .glb)",scl:"Échelle",rot:"Rotation auto",lib:"Bibliothèque 3D",upok:"Téléversé",nomod:"Aucun modèle 3D."},
+ar:{home:"الرئيسية",events:"الأحداث",lab:"مختبر الفلك",admin:"الإدارة",clock:"الساعة الفلكية المباشرة",explore:"استكشف الكون",upcoming:"الأحداث القادمة",moon:"طور القمر",rise:"شروق الشمس",set:"غروب الشمس",next:"الحدث القادم",days:"أيام",hrs:"ساعة",min:"دقيقة",sec:"ثانية",illum:"مضاءة",none:"لا يوجد حدث",back:"رجوع",login:"دخول",logout:"خروج",pass:"كلمة المرور",wrong:"كلمة المرور خاطئة",site:"الموقع",cats:"الأقسام",evs:"الأحداث",labs:"مشاريع المختبر",loc:"الموقع الجغرافي",add:"إضافة",del:"حذف",imp:"استيراد JSON",reset:"إعادة ضبط الكل (اضغط مرتين)",desc:"الوصف",url:"رابط المشروع (https)",open:"فتح في تبويب جديد",empty:"لا يوجد شيء بعد.",note:"تُحفظ التعديلات تلقائياً على الخادم.",lt:"العنوان",ls:"العنوان الفرعي",show:"إظهار في الرئيسية",accent:"لون التمييز",cover:"صورة الغلاف",all:"كل الأحداث",nolab:"لا توجد مشاريع منشورة.",bad:"رابط غير صالح.",date:"التاريخ",cat:"القسم",uni:"الكون ثلاثي الأبعاد",mph:"محاكي القمر",srch:"بحث…",favs:"المفضلة",pgs:"الصفحات",dia:"القطر",dst:"البعد عن الشمس",per:"مدة المدار",yr:"سنة",dy:"يوم",pub:"نشر للجميع",pubok:"للمالك فقط.",foot:"نص التذييل",logo:"نص الشعار",no3:"بدون",sol:"النظام الشمسي",mon:"القمر",res:"نتيجة",drag:"اسحب للتدوير · العجلة للتكبير · اضغط على كوكب",today:"اليوم",m3:"نماذج 3D",upl:"ارفع ملف .glb (الحد 6 ميغا)",mur:"…أو رابط النموذج (https, .glb)",scl:"الحجم",rot:"دوران تلقائي",lib:"مكتبة 3D",upok:"تم الرفع",nomod:"لا توجد نماذج 3D."}};
+const MN={en:["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"],fr:["Nouvelle lune","Premier croissant","Premier quartier","Gibbeuse croissante","Pleine lune","Gibbeuse décroissante","Dernier quartier","Dernier croissant"],ar:["محاق","هلال متزايد","التربيع الأول","أحدب متزايد","بدر","أحدب متناقص","التربيع الأخير","هلال متناقص"]};
+const ME=["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
+const mk=(id,ic,ar,en,fr)=>({id,icon:ic,show:true,t:{ar,en,fr},d:{ar:"اكتشف: "+ar,en:"Discover: "+en,fr:"Découvrez : "+fr}});
+const DEF=()=>({lang:"en",site:{accent:"#8b7cff",title:{en:"Explore the Universe",fr:"Explorez l’Univers",ar:"استكشف الكون"},sub:{en:"Real-time sky data, events and interactive astronomy.",fr:"Données du ciel en temps réel, événements et astronomie interactive.",ar:"بيانات السماء لحظة بلحظة، أحداث وفلك تفاعلي."}},
+loc:{lat:36.8,lng:10.18,name:"Tunis"},
+cats:[mk("solar","☀️","النظام الشمسي","Solar System","Système solaire"),mk("planets","🪐","الكواكب","Planets","Planètes"),mk("stars","⭐","النجوم","Stars","Étoiles"),mk("galaxies","🌌","المجرات","Galaxies","Galaxies"),mk("blackholes","⚫","الثقوب السوداء","Black Holes","Trous noirs"),mk("nebulae","☁️","السدم","Nebulae","Nébuleuses"),mk("space","🚀","استكشاف الفضاء","Space Exploration","Exploration spatiale"),mk("meteors","☄️","زخات الشهب","Meteor Showers","Pluies de météores"),mk("eclipses","🌑","الكسوف والخسوف","Eclipses","Éclipses"),mk("cosmos","🔭","علم الكون","Cosmology","Cosmologie")],
+ev:[{id:"leonids",cat:"meteors",d:"2026-11-17T00:00",t:{en:"Leonid meteor shower (peak)",fr:"Pluie des Léonides (maximum)",ar:"زخة الأسديات (الذروة)"},x:{en:"Meteors from comet Tempel-Tuttle, best seen after midnight.",fr:"Météores de la comète Tempel-Tuttle, à observer après minuit.",ar:"شهب من المذنب تمبل-تتل، تُرصد بعد منتصف الليل."}},
+{id:"geminids",cat:"meteors",d:"2026-12-14T00:00",t:{en:"Geminid meteor shower (peak)",fr:"Pluie des Géminides (maximum)",ar:"زخة التوأميات (الذروة)"},x:{en:"One of the strongest annual showers.",fr:"L’une des pluies annuelles les plus intenses.",ar:"من أقوى الزخات السنوية."}},
+{id:"eclipse2027",cat:"eclipses",d:"2027-08-02T10:00",t:{en:"Total solar eclipse (North Africa)",fr:"Éclipse solaire totale (Afrique du Nord)",ar:"كسوف شمسي كلي (شمال أفريقيا)"},x:{en:"Totality crosses North Africa. Check the exact path for your location.",fr:"La totalité traverse l’Afrique du Nord. Vérifiez le tracé exact pour votre position.",ar:"يمر الكسوف الكلي بشمال أفريقيا. تحقق من المسار الدقيق لموقعك."}}],
+lab:[],pages:[],models:[]});
+let S=DEF(),TOKEN="",svT;try{S.lang=localStorage.getItem("av2l")||S.lang;TOKEN=sessionStorage.getItem("avt")||""}catch(e){}
+const save=()=>{if(!TOKEN)return;clearTimeout(svT);svT=setTimeout(async()=>{try{const r=await fetch("/api/state",{method:"PUT",headers:{"Content-Type":"application/json",Authorization:"Bearer "+TOKEN},body:JSON.stringify(S)});if(r.status==401){auth=false;TOKEN="";render();alert("Session expired")}else if(!r.ok)alert("Save failed "+r.status)}catch(x){alert("Save failed")}},400)};
+const $=id=>document.getElementById(id),p2=n=>String(n).padStart(2,"0");
+const e=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const u=k=>(U[S.lang]||U.en)[k]||k,tr=o=>o&&(o[S.lang]||o.en||o.fr||o.ar)||"";
+const get=p=>p.split(".").reduce((o,k)=>o&&o[k],S);
+const set=(p,v)=>{const a=p.split("."),l=a.pop();a.reduce((o,k)=>o[k]||(o[k]={}),S)[l]=v};
+const fd=d=>new Date(d).toLocaleDateString(S.lang,{dateStyle:"long"});
+let auth=!!TOKEN,tab="site",armed=false,msg="";
+
+function moonInfo(t){const a=((((t/864e5+2440587.5)-2451550.1)/29.530588853)%1+1)%1,i=Math.floor(a*8+.5)%8;return{n:MN[S.lang][i],e:ME[i],ill:Math.round((1-Math.cos(a*2*Math.PI))/2*100)}}
+function sun(lat,lng,dt){const r=Math.PI/180,y=dt.getFullYear(),b=Date.UTC(y,dt.getMonth(),dt.getDate()),n=Math.floor((b-Date.UTC(y,0,0))/864e5),B=r*360/365*(n-81),dec=23.44*r*Math.sin(B),eot=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B),c=(Math.cos(r*90.833)-Math.sin(lat*r)*Math.sin(dec))/(Math.cos(lat*r)*Math.cos(dec));if(Math.abs(c)>1)return null;const H=Math.acos(c)/r,nn=720-4*lng-eot;return[new Date(b+(nn-4*H)*6e4),new Date(b+(nn+4*H)*6e4)]}
+const upc=()=>S.ev.filter(v=>new Date(v.d)>new Date()).sort((a,b)=>new Date(a.d)-new Date(b.d));
+
+const catCard=c=>`<a class="card" href="#cat-${c.id}"><div class="ic">${e(c.icon)}</div><h3>${e(tr(c.t))}</h3><div class="sub">${e(tr(c.d))}</div></a>`;
+const evCard=v=>`<a class="card" href="#ev-${v.id}">${v.img&&v.img.startsWith("data:image/")?`<img src="${v.img}" alt="">`:""}<h3>${e(tr(v.t))}</h3><div class="sub">${fd(v.d)}</div></a>`;
+const labCard=p=>`<a class="card" href="#lab-${p.id}"><div class="ic">🧪</div><h3>${e(tr(p.t))}</h3></a>`;
+const safeUrl=s=>/^https?:\/\//i.test(s||"")?s:"";
+
+function nav(){return`<nav><a class="logo" href="#home">${e(S.site.logo||"ASTROVERSE")}</a><div class="lk"><a href="#home">${u("home")}</a><a href="#events">${u("events")}</a><a href="#lab">${u("lab")}</a><a href="#universe">${u("uni")}</a><a href="#3d">3D</a><a href="#moon">${u("mph")}</a>${S.pages.filter(p=>p.nav).map(p=>`<a href="#pg-${p.id}">${e(tr(p.t))}</a>`).join("")}<a href="#favs">♥</a><input id="q" placeholder="${u("srch")}" style="width:110px;padding:3px 8px">${auth?`<a href="#admin">${u("admin")}</a>`:""}${["ar","en","fr"].map(l=>`<button class="lb ${S.lang==l?"on":""}" data-a="lang:${l}">${l.toUpperCase()}</button>`).join("")}</div></nav>`}
+
+function home(){return`<section class="hero"><div><div class="lbl">${u("clock")}</div><h1>${e(tr(S.site.title))}</h1><p class="sub">${e(tr(S.site.sub))}</p><div class="big" id="time"></div><div class="sub" id="date"></div><br><div class="lbl">${u("next")}: <span id="evn"></span></div><div class="cd" id="cd"></div></div><canvas id="sys" width="600" height="600"></canvas></section>
+<section><div class="grid"><div class="card"><div class="lbl">${u("moon")}</div><div class="big" id="moon"></div><div class="sub" id="moonp"></div></div><div class="card"><div class="lbl">${u("rise")}</div><div class="big" id="sr"></div><div class="sub">${e(S.loc.name)}</div></div><div class="card"><div class="lbl">${u("set")}</div><div class="big" id="ss"></div><div class="sub">${S.loc.lat}, ${S.loc.lng}</div></div></div></section>
+<section><h2>${u("explore")}</h2><div class="grid">${S.cats.filter(c=>c.show).map(catCard).join("")}</div></section>
+<section><h2>${u("upcoming")}</h2><div class="grid">${upc().slice(0,6).map(evCard).join("")||`<p class="sub">${u("empty")}</p>`}</div></section>
+<section><h2>${u("lab")}</h2><div class="grid">${S.lab.slice(0,3).map(labCard).join("")||`<p class="sub">${u("nolab")}</p>`}</div></section>`}
+
+function catPage(id){const c=S.cats.find(x=>x.id==id);if(!c)return`<section><p>${u("empty")}</p></section>`;const L=S.ev.filter(v=>v.cat==id).sort((a,b)=>new Date(a.d)-new Date(b.d));return`<section><a class="chip" href="#home">← ${u("back")}</a><h1>${e(c.icon)} ${e(tr(c.t))} <button class="lb" data-a="fav:cat-${c.id}">${FV.includes("cat-"+c.id)?"♥":"♡"}</button></h1><p class="sub">${e(tr(c.d))}</p>${M3(c.m)}<div class="grid">${L.map(evCard).join("")||`<p class="sub">${u("empty")}</p>`}</div></section>`}
+function evPage(id){const v=S.ev.find(x=>x.id==id);if(!v)return`<section><p>${u("empty")}</p></section>`;const c=S.cats.find(x=>x.id==v.cat);return`<section><a class="chip" href="#${c?"cat-"+c.id:"events"}">← ${u("back")}</a><h1>${e(tr(v.t))}</h1><p><button class="lb" data-a="fav:ev-${v.id}">${FV.includes("ev-"+v.id)?"♥":"♡"}</button> <span class="chip">${fd(v.d)}</span> ${c?`<a class="chip" href="#cat-${c.id}">${e(tr(c.t))}</a>`:""}</p>${v.img&&v.img.startsWith("data:image/")?`<img src="${v.img}" alt="" style="max-width:100%;border-radius:14px">`:""}<p class="pre">${e(tr(v.x))}</p>${M3(v.m)}</section>`}
+function labPage(id){const p=S.lab.find(x=>x.id==id),s=p&&safeUrl(p.u);if(!p)return`<section><p>${u("empty")}</p></section>`;return`<section><a class="chip" href="#lab">← ${u("back")}</a><h1>${e(tr(p.t))}</h1>${s?`<p><a class="chip" href="${e(s)}" target="_blank" rel="noopener noreferrer">${u("open")} ↗</a></p><iframe src="${e(s)}" sandbox="allow-scripts allow-pointer-lock allow-fullscreen" referrerpolicy="no-referrer" loading="lazy"></iframe>`:`<p class="sub">${u("bad")}</p>`}</section>`}
+
+const F=(p,ph,t)=>t?`<textarea data-p="${p}" placeholder="${ph}" rows="2">${e(get(p))}</textarea>`:`<input data-p="${p}" placeholder="${ph}" value="${e(get(p))}">`;
+const T=(p,t)=>`<div class="g3">${["en","fr","ar"].map(l=>F(p+"."+l,l.toUpperCase(),t)).join("")}</div>`;
+const mv=(k,i)=>`<button class="pb" data-a="up:${k}:${i}">↑</button><button class="pb" data-a="dn:${k}:${i}">↓</button><button class="pb dg" data-a="del:${k}:${i}">${u("del")}</button>`;
+
+function adminPage(){
+if(!auth)return`<section class="adm"><h2>${u("admin")}</h2><input id="pw" type="password" placeholder="${u("pass")}" style="max-width:260px"><button class="pb" data-a="login">${u("login")}</button><p class="sub">${msg}</p></section>`;
+const tabs=[["site","site"],["cats","cats"],["ev","evs"],["lab","labs"],["pg","pgs"],["md","m3"]];
+let b="";
+if(tab=="site")b=`<div class="card"><div class="lbl">${u("logo")}</div>${F("site.logo","Logo")}<div class="lbl">${u("foot")}</div>${T("site.foot")}<div class="lbl">${u("lt")}</div>${T("site.title")}<div class="lbl">${u("ls")}</div>${T("site.sub","t")}<div class="lbl">${u("accent")}</div><input type="color" data-p="site.accent" value="${e(S.site.accent)}" style="width:80px"></div>
+<div class="card"><div class="lbl">${u("loc")}</div><div class="g3">${F("loc.name","Name")}${F("loc.lat","Lat")}${F("loc.lng","Lng")}</div><div class="lbl">${u("pass")}</div><input id="npw" type="password" placeholder="min 8" autocomplete="new-password"><button class="pb" data-a="pw">OK</button></div>
+<div class="card"><textarea id="io" rows="5">${e(JSON.stringify(S))}</textarea><button class="pb" data-a="imp">${u("imp")}</button><button class="pb dg" data-a="reset">${u("reset")}</button></div>`;
+if(tab=="cats")b=S.cats.map((c,i)=>`<div class="card"><div class="g3">${F(`cats.${i}.icon`,"Icon")}${F(`cats.${i}.id`,"id")}<label><input type="checkbox" style="width:auto" data-p="cats.${i}.show" ${c.show?"checked":""}> ${u("show")}</label>${S3(`cats.${i}.m`,c.m)}</div>${T(`cats.${i}.t`)}${T(`cats.${i}.d`,"t")}${mv("cats",i)}</div>`).join("")+`<button class="pb" data-a="add:cats">+ ${u("add")}</button>`;
+if(tab=="ev")b=S.ev.map((v,i)=>`<div class="card"><div class="g3"><select data-p="ev.${i}.cat">${S.cats.map(c=>`<option value="${e(c.id)}" ${c.id==v.cat?"selected":""}>${e(tr(c.t))}</option>`).join("")}</select><input type="datetime-local" data-p="ev.${i}.d" value="${e(v.d)}"><input type="file" accept="image/*" data-img="${i}">${S3(`ev.${i}.m`,v.m)}</div>${T(`ev.${i}.t`)}${T(`ev.${i}.x`,"t")}${mv("ev",i)}</div>`).join("")+`<button class="pb" data-a="add:ev">+ ${u("add")}</button>`;
+if(tab=="lab")b=S.lab.map((p,i)=>`<div class="card">${T(`lab.${i}.t`)}${F(`lab.${i}.u`,u("url"))}${mv("lab",i)}</div>`).join("")+`<button class="pb" data-a="add:lab">+ ${u("add")}</button>`;
+if(tab=="pg")b=S.pages.map((p,i)=>`<div class="card"><div class="g3">${S3(`pages.${i}.m`,p.m)}<label><input type="checkbox" style="width:auto" data-p="pages.${i}.nav" ${p.nav?"checked":""}> Menu</label></div>${T(`pages.${i}.t`)}${T(`pages.${i}.x`,"t")}${mv("pages",i)}</div>`).join("")+`<button class="pb" data-a="add:pages">+ ${u("add")}</button>`;
+if(tab=="md")b=S.models.map((m,i)=>`<div class="card">${T(`models.${i}.t`)}<div class="g3"><input type="file" accept=".glb" data-mdl="${i}"><input data-p="models.${i}.u" placeholder="${u("mur")}" value="${e(m.u||"")}">${F(`models.${i}.s`,u("scl"))}<label><input type="checkbox" style="width:auto" data-p="models.${i}.r" ${m.r?"checked":""}> ${u("rot")}</label></div><p class="sub">${m.up?"✔ "+u("upok")+" ("+Math.round((m.sz||0)/1024)+" KB)":u("upl")}</p>${mv("models",i)}</div>`).join("")+`<button class="pb" data-a="add:models">+ ${u("add")}</button>`;
+return`<section class="adm"><h2>${u("admin")}</h2><p class="sub">${u("note")}</p><div class="tabs">${tabs.map(([k,l])=>`<button class="pb ${tab==k?"on":""}" data-a="tab:${k}">${u(l)}</button>`).join("")}<button class="pb dg" data-a="logout">${u("logout")}</button></div>${b}</section>`}
+
+function render(){const r=location.hash.slice(1)||"home";document.documentElement.lang=S.lang;document.documentElement.dir=S.lang=="ar"?"rtl":"ltr";document.documentElement.style.setProperty("--ac",S.site.accent);
+let v;if(r=="home")v=home();else if(r=="events")v=`<section><h1>${u("all")}</h1><div class="grid">${[...S.ev].sort((a,b)=>new Date(a.d)-new Date(b.d)).map(evCard).join("")||`<p class="sub">${u("empty")}</p>`}</div></section>`;
+else if(r=="lab")v=`<section><h1>${u("lab")}</h1><div class="grid">${S.lab.map(labCard).join("")||`<p class="sub">${u("nolab")}</p>`}</div></section>`;
+else if(r.startsWith("cat-"))v=catPage(r.slice(4));else if(r.startsWith("ev-"))v=evPage(r.slice(3));else if(r.startsWith("lab-"))v=labPage(r.slice(4));
+else if(r=="admin")v=adminPage();else if(r=="universe")v=`<section><h1>${u("uni")}</h1><p class="sub">${u("drag")}</p>${M3("solar")}</section>`;else if(r=="moon")v=`<section><h1>${u("mph")}</h1>${M3("moon")}</section>`;else if(r=="3d")v=`<section><h1>${u("lib")}</h1><div class="grid">${S.models.map(m=>`<a class="card" href="#m-${m.id}"><div class="ic">🧊</div><h3>${e(tr(m.t))}</h3></a>`).join("")||`<p class="sub">${u("nomod")}</p>`}</div></section>`;else if(r.startsWith("m-")){const m=S.models.find(x=>x.id==r.slice(2));v=m?`<section><a class="chip" href="#3d">← ${u("back")}</a><h1>${e(tr(m.t))}</h1>${M3("model:"+m.id)}</section>`:`<section><p>${u("empty")}</p></section>`}else if(r=="search")v=srch();else if(r=="favs")v=favs();else if(r.startsWith("pg-"))v=pgPage(r.slice(3));else v=home();
+$("app").innerHTML=nav()+v+`<footer>${e(tr(S.site.foot)||"© ASTROVERSE")}</footer>`;tick();mount();window.scrollTo(0,0)}
+
+function tick(){if(!$("time"))return;const now=new Date();$("time").textContent=now.toLocaleTimeString(S.lang);$("date").textContent=now.toLocaleDateString(S.lang,{dateStyle:"full"});
+const m=moonInfo(+now);$("moon").textContent=m.e+" "+m.n;$("moonp").textContent=m.ill+"% "+u("illum");
+const s=sun(+S.loc.lat,+S.loc.lng,now),f=d=>d.toLocaleTimeString(S.lang,{hour:"2-digit",minute:"2-digit"});$("sr").textContent=s?f(s[0]):"—";$("ss").textContent=s?f(s[1]):"—";
+const n=upc()[0];if(n){$("evn").textContent=tr(n.t);let q=Math.max(0,Math.floor((new Date(n.d)-now)/1e3));$("cd").innerHTML=[["days",86400],["hrs",3600],["min",60],["sec",1]].map(([l,v])=>{const x=Math.floor(q/v);q-=x*v;return`<div><span class="big">${p2(x)}</span><span class="lbl">${u(l)}</span></div>`}).join("")}else{$("evn").textContent=u("none");$("cd").innerHTML=""}}
+setInterval(tick,1000);
+
+const P=[["#b5b5b5",4,.9,4.1],["#e8c37a",6,1.5,1.6],["#3ab0ff",6.5,2.1,1],["#e0603a",5,2.8,.53],["#d9a679",13,4,.08],["#e8d49a",11,5.1,.034],["#8fe0e8",8,6,.012],["#4a6cff",8,7,.006]],st=Array.from({length:90},()=>[Math.random()*600,Math.random()*600,Math.random()*1.5]);
+function draw(t){const cv=$("sys");if(cv){const cx=cv.getContext("2d");cx.clearRect(0,0,600,600);cx.fillStyle="#fff";st.forEach(s=>{cx.globalAlpha=.4+.4*Math.sin(t/700+s[0]);cx.fillRect(s[0],s[1],s[2],s[2])});cx.globalAlpha=1;const g=cx.createRadialGradient(300,300,0,300,300,28);g.addColorStop(0,"#fff6c0");g.addColorStop(1,"rgba(255,180,40,0)");cx.fillStyle=g;cx.beginPath();cx.arc(300,300,28,0,7);cx.fill();
+P.forEach(([c,r,o,sp])=>{const R=o*38;cx.strokeStyle="rgba(160,150,255,.15)";cx.beginPath();cx.arc(300,300,R,0,7);cx.stroke();const a=t/2500*sp;cx.fillStyle=c;cx.beginPath();cx.arc(300+R*Math.cos(a),300+R*Math.sin(a),r/1.6+1,0,7);cx.fill()})}requestAnimationFrame(draw)}requestAnimationFrame(draw);
+
+document.addEventListener("click",ev=>{const el=ev.target.closest("[data-a]");if(!el)return;const[a,k,i]=el.dataset.a.split(":"),n=+i;
+if(a=="lang"){S.lang=k;try{localStorage.setItem("av2l",k)}catch(x){}}
+else if(a=="tab"){tab=k;armed=false}
+else if(a=="login"){doLogin();return}
+else if(a=="pw"){chgPw();return}
+else if(a=="logout"){auth=false;TOKEN="";try{sessionStorage.removeItem("avt")}catch(x){}}
+else if(a=="add"){const id=k[0]+Date.now();S[k].push(k=="cats"?{...mk(id,"✨","جديد","New","Nouveau"),id}:k=="ev"?{id,cat:S.cats[0]?S.cats[0].id:"",d:new Date(Date.now()+864e6).toISOString().slice(0,16),t:{en:"New event",fr:"Nouvel événement",ar:"حدث جديد"},x:{en:"",fr:"",ar:""}}:k=="pages"?{id,nav:true,m:"none",t:{en:"New page",fr:"Nouvelle page",ar:"صفحة جديدة"},x:{en:"",fr:"",ar:""}}:k=="models"?{id,s:"1",r:true,u:"",t:{en:"New model",fr:"Nouveau modèle",ar:"نموذج جديد"}}:{id,t:{en:"New project",fr:"Nouveau projet",ar:"مشروع جديد"},u:""});save()}
+else if(a=="del"){if(k=="models"&&S.models[n]&&S.models[n].up)fetch("/api/model/"+S.models[n].id,{method:"DELETE",headers:{Authorization:"Bearer "+TOKEN}});S[k].splice(n,1);save()}
+else if(a=="up"||a=="dn"){const j=a=="up"?n-1:n+1,A=S[k];if(j>=0&&j<A.length){[A[n],A[j]]=[A[j],A[n]];save()}}
+else if(a=="fav"){const j=FV.indexOf(k);j<0?FV.push(k):FV.splice(j,1);try{localStorage.setItem("av2f",JSON.stringify(FV))}catch(x){}}
+else if(a=="pub"){pub();return}
+else if(a=="imp"){try{S=Object.assign(DEF(),JSON.parse($("io").value));save()}catch(x){alert("JSON ?");return}}
+else if(a=="reset"){if(!armed){armed=true;el.textContent="⚠ "+u("reset");return}armed=false;S=DEF();save()}
+render()});
+
+document.addEventListener("change",ev=>{const t=ev.target;
+if(t.dataset.mdl!==undefined){upModel(+t.dataset.mdl,t.files[0]);return}
+if(t.dataset.img!==undefined){const f=t.files[0];if(!f)return;const im=new Image(),rd=new FileReader();rd.onload=()=>{im.onload=()=>{const w=Math.min(800,im.width),c=document.createElement("canvas");c.width=w;c.height=im.height*w/im.width;c.getContext("2d").drawImage(im,0,0,c.width,c.height);S.ev[+t.dataset.img].img=c.toDataURL("image/jpeg",.7);save();render()};im.src=rd.result};rd.readAsDataURL(f);return}
+const p=t.dataset.p;if(!p)return;let v=t.type=="checkbox"?t.checked:t.value;if(p=="loc.lat"||p=="loc.lng")v=parseFloat(v)||0;set(p,v);save();if(p=="site.accent")document.documentElement.style.setProperty("--ac",v)});
+
+
+let FV=[],Q="";try{FV=JSON.parse(localStorage.getItem("av2f")||"[]")}catch(x){}
+const M3=m=>m&&m!="none"?`<div class="v3" data-3d="${e(m)}"${m=="moon"?' style="height:auto"':""}></div>`:"";
+const S3=(p,v)=>`<select data-p="${p}">${[["none","no3"],["solar","sol"],["moon","mon"]].map(([k,l])=>`<option value="${k}" ${(v||"none")==k?"selected":""}>3D: ${u(l)}</option>`).join("")}${S.models.map(m=>`<option value="model:${m.id}" ${v=="model:"+m.id?"selected":""}>3D: ${e(tr(m.t))}</option>`).join("")}</select>`;
+const hay=(...o)=>o.flatMap(x=>Object.values(x||{})).join(" ").toLowerCase();
+function srch(){const q=Q.toLowerCase().trim(),r=[];S.cats.forEach(c=>{if(hay(c.t,c.d).includes(q))r.push(catCard(c))});S.ev.forEach(v=>{if(hay(v.t,v.x).includes(q))r.push(evCard(v))});S.pages.forEach(p=>{if(hay(p.t,p.x).includes(q))r.push(`<a class="card" href="#pg-${p.id}"><h3>${e(tr(p.t))}</h3></a>`)});S.lab.forEach(p=>{if(hay(p.t).includes(q))r.push(labCard(p))});return`<section><h1>${e(Q)}</h1><p class="sub">${r.length} ${u("res")}</p><div class="grid">${r.join("")}</div></section>`}
+function favs(){const L=FV.map(k=>{if(k.startsWith("ev-")){const v=S.ev.find(x=>x.id==k.slice(3));return v?evCard(v):""}const c=S.cats.find(x=>x.id==k.slice(4));return c?catCard(c):""}).join("");return`<section><h1>♥ ${u("favs")}</h1><div class="grid">${L||`<p class="sub">${u("empty")}</p>`}</div></section>`}
+function pgPage(id){const p=S.pages.find(x=>x.id==id);if(!p)return`<section><p>${u("empty")}</p></section>`;return`<section><h1>${e(tr(p.t))}</h1><p class="pre">${e(tr(p.x))}</p>${M3(p.m)}</section>`}
+document.addEventListener("keydown",ev=>{if(ev.target.id=="q"&&ev.key=="Enter"){Q=ev.target.value;location.hash=="#search"?render():location.hash="search"}});
+async function pub(){const a=window.claude&&await claude.use("artifact");if(!a){alert(u("pubok"));return}const c=document.documentElement.cloneNode(true);c.querySelector("#app").innerHTML="";c.querySelector("#state").textContent=JSON.stringify(S).replace(/</g,"\\u003c");try{await a.publish("<!DOCTYPE html>\n"+c.outerHTML)}catch(x){alert(x.code||x.message)}}
+function mount(){document.querySelectorAll("[data-3d]").forEach(el=>{const k=el.getAttribute("data-3d");k=="moon"?moonSim(el):k.startsWith("model:")?viewer(el,k.slice(6)):solar(el)})}
+const PD=[["Mercury","Mercure","عطارد",.5,"#b5b5b5",4879,.39,88],["Venus","Vénus","الزهرة",.9,"#e8c37a",12104,.72,225],["Earth","Terre","الأرض",1,"#3a8cff",12742,1,365],["Mars","Mars","المريخ",.7,"#e0603a",6779,1.52,687],["Jupiter","Jupiter","المشتري",2,"#d9a679",139820,5.2,4333],["Saturn","Saturne","زحل",1.7,"#e8d49a",116460,9.58,10759],["Uranus","Uranus","أورانوس",1.2,"#8fe0e8",50724,19.2,30687],["Neptune","Neptune","نبتون",1.2,"#4a6cff",49244,30.1,60190]];
+function solar(el){if(!window.THREE){el.textContent="3D unavailable";return}
+const T3=THREE,w=el.clientWidth||600,h=el.clientHeight||420,R=new T3.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.setSize(w,h);el.appendChild(R.domElement);
+const sc=new T3.Scene(),cam=new T3.PerspectiveCamera(50,w/h,.1,1000),root=new T3.Group(),pl=[];sc.add(root);
+root.add(new T3.Mesh(new T3.SphereGeometry(2.4,32,16),new T3.MeshBasicMaterial({color:0xffcc55})));sc.add(new T3.PointLight(0xffffff,1.6,0,0),new T3.AmbientLight(0x404060,.8));
+PD.forEach((d,i)=>{const o=6+i*3.4,m=new T3.Mesh(new T3.SphereGeometry(d[3]*.8,24,16),new T3.MeshStandardMaterial({color:d[4],roughness:.9}));m.userData={i,o,sp:.004*Math.pow(365/d[7],.45),a:Math.random()*6};root.add(m);pl.push(m);
+const pts=[];for(let k=0;k<=96;k++)pts.push(new T3.Vector3(Math.cos(k/96*6.2832)*o,0,Math.sin(k/96*6.2832)*o));root.add(new T3.Line(new T3.BufferGeometry().setFromPoints(pts),new T3.LineBasicMaterial({color:0x6a60c8,transparent:true,opacity:.35})));
+if(i==5){const r=new T3.Mesh(new T3.RingGeometry(1.9,3,48),new T3.MeshBasicMaterial({color:0xcdb98a,side:2,transparent:true,opacity:.6}));r.rotation.x=1.9;m.add(r)}});
+const sp=new Float32Array(900);for(let i=0;i<900;i++)sp[i]=(Math.random()-.5)*400;const sg=new T3.BufferGeometry();sg.setAttribute("position",new T3.BufferAttribute(sp,3));sc.add(new T3.Points(sg,new T3.PointsMaterial({color:0xffffff,size:.6})));
+let rx=.5,ry=0,dist=48,drag=null,moved=0;const pn=document.createElement("div"),cv=R.domElement;pn.className="pn";pn.style.display="none";el.appendChild(pn);
+function pick(ev){const b=cv.getBoundingClientRect(),rc=new T3.Raycaster();rc.setFromCamera(new T3.Vector2((ev.clientX-b.left)/b.width*2-1,-(ev.clientY-b.top)/b.height*2+1),cam);const hit=rc.intersectObjects(pl)[0];if(!hit){pn.style.display="none";return}
+const d=PD[hit.object.userData.i],py=d[7]>700?(d[7]/365).toFixed(1)+" "+u("yr"):d[7]+" "+u("dy");pn.style.display="block";pn.innerHTML="";const b1=document.createElement("b");b1.textContent=d[{en:0,fr:1,ar:2}[S.lang]];pn.append(b1);
+[[u("dia"),d[5].toLocaleString(S.lang)+" km"],[u("dst"),d[6]+" AU"],[u("per"),py]].forEach(r=>{const q=document.createElement("div");q.textContent=r[0]+": "+r[1];pn.append(q)})}
+cv.onpointerdown=ev=>{drag=[ev.clientX,ev.clientY];moved=0;cv.setPointerCapture(ev.pointerId)};
+cv.onpointermove=ev=>{if(!drag)return;const dx=ev.clientX-drag[0],dy=ev.clientY-drag[1];moved+=Math.abs(dx)+Math.abs(dy);ry+=dx*.008;rx=Math.max(-1.4,Math.min(1.4,rx+dy*.008));drag=[ev.clientX,ev.clientY]};
+cv.onpointerup=ev=>{drag=null;if(moved<6)pick(ev)};
+cv.onwheel=ev=>{ev.preventDefault();dist=Math.max(12,Math.min(110,dist*(1+ev.deltaY*.001)))};
+(function loop(){if(!document.body.contains(el)){R.dispose();return}pl.forEach(m=>{const k=m.userData;k.a+=k.sp;m.position.set(Math.cos(k.a)*k.o,0,Math.sin(k.a)*k.o)});root.rotation.set(rx,ry,0);cam.position.set(0,0,dist);R.render(sc,cam);requestAnimationFrame(loop)})()}
+function mdraw(cv,a){const x=cv.getContext("2d"),r=100,c=130,k=Math.cos(a*2*Math.PI),wax=a<.5,right=wax?k>0:k<0;x.clearRect(0,0,260,260);x.fillStyle="#1b1d33";x.beginPath();x.arc(c,c,r,0,7);x.fill();x.fillStyle="#f1ecd2";x.beginPath();x.arc(c,c,r,-Math.PI/2,Math.PI/2,!wax);x.ellipse(c,c,Math.max(.01,r*Math.abs(k)),r,0,Math.PI/2,-Math.PI/2,right);x.fill()}
+function moonSim(el){el.innerHTML="";const d=document.createElement("input"),c=document.createElement("canvas"),t=document.createElement("div"),row=document.createElement("div"),B=(s,f)=>{const b=document.createElement("button");b.className="pb";b.textContent=s;b.onclick=f;return b};
+d.type="date";c.width=c.height=260;c.className="mc";t.className="big";t.style.textAlign="center";row.style.cssText="text-align:center;padding:10px";let cur=new Date();
+const upd=()=>{d.value=cur.getFullYear()+"-"+p2(cur.getMonth()+1)+"-"+p2(cur.getDate());const t0=Date.UTC(cur.getFullYear(),cur.getMonth(),cur.getDate(),12),a=((((t0/864e5+2440587.5)-2451550.1)/29.530588853)%1+1)%1,m=moonInfo(t0);mdraw(c,a);t.textContent=m.e+" "+m.n+" · "+m.ill+"%"};
+d.onchange=()=>{const x=new Date(d.value+"T12:00");if(!isNaN(x)){cur=x;upd()}};
+row.append(B("◀",()=>{cur=new Date(+cur-864e5);upd()}),d,B("▶",()=>{cur=new Date(+cur+864e5);upd()}),B(u("today"),()=>{cur=new Date();upd()}));el.append(c,t,row);upd()}
+async function upModel(i,f){if(!f)return;if(f.size>6*1048576){alert("Max 6 MB");return}const m=S.models[i],buf=new Uint8Array(await f.arrayBuffer());let s="";for(let k=0;k<buf.length;k+=32768)s+=String.fromCharCode.apply(null,buf.subarray(k,k+32768));try{const r=await fetch("/api/model/"+m.id,{method:"PUT",headers:{"Content-Type":"application/json",Authorization:"Bearer "+TOKEN},body:JSON.stringify({data:btoa(s)})});if(!r.ok)throw 0;m.up=true;m.sz=f.size;save();render()}catch(x){alert("Upload failed")}}
+const loadJS=url=>new Promise((ok,no)=>{if(document.querySelector('script[src="'+url+'"]'))return ok();const s=document.createElement("script");s.src=url;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+async function viewer(el,id){const m=S.models.find(x=>x.id==id);if(!m||!window.THREE){el.textContent="3D unavailable";return}
+try{await loadJS("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js")}catch(x){el.textContent="3D unavailable";return}
+const src=m.up?"/api/model/"+m.id+"?v="+(m.sz||0):(/^https:\/\//.test(m.u||"")?m.u:"");if(!src){el.textContent=u("nomod");return}
+const T3=THREE,w=el.clientWidth||600,h=el.clientHeight||420,R=new T3.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.setSize(w,h);el.appendChild(R.domElement);
+const sc=new T3.Scene(),cam=new T3.PerspectiveCamera(45,w/h,.1,1000),g=new T3.Group(),dl=new T3.DirectionalLight(0xffffff,1.2);dl.position.set(5,8,6);sc.add(g,dl,new T3.HemisphereLight(0xffffff,0x303050,1.1));
+new T3.GLTFLoader().load(src,gl=>{const o=gl.scene,b=new T3.Box3().setFromObject(o),c=b.getCenter(new T3.Vector3()),z=b.getSize(new T3.Vector3()),k=4/Math.max(z.x,z.y,z.z,1e-6)*(parseFloat(m.s)||1);o.position.sub(c);const q=new T3.Group();q.add(o);q.scale.setScalar(k);g.add(q)},undefined,()=>{el.textContent="3D load error"});
+let rx=.2,ry=0,dist=9,drag=null;const cv=R.domElement;
+cv.onpointerdown=ev=>{drag=[ev.clientX,ev.clientY];cv.setPointerCapture(ev.pointerId)};cv.onpointermove=ev=>{if(!drag)return;ry+=(ev.clientX-drag[0])*.008;rx=Math.max(-1.4,Math.min(1.4,rx+(ev.clientY-drag[1])*.008));drag=[ev.clientX,ev.clientY]};cv.onpointerup=()=>{drag=null};cv.onwheel=ev=>{ev.preventDefault();dist=Math.max(3,Math.min(30,dist*(1+ev.deltaY*.001)))};
+(function loop(){if(!document.body.contains(el)){R.dispose();return}if(m.r&&!drag)ry+=.005;g.rotation.set(rx,ry,0);cam.position.set(0,0,dist);R.render(sc,cam);requestAnimationFrame(loop)})()}
+async function doLogin(){try{const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:$("pw").value})});if(!r.ok)throw 0;TOKEN=(await r.json()).token;try{sessionStorage.setItem("avt",TOKEN)}catch(x){}auth=true;msg=""}catch(x){msg=u("wrong")}render()}
+async function chgPw(){const v=$("npw").value;if(v.length<8){alert("min 8");return}const r=await fetch("/api/password",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+TOKEN},body:JSON.stringify({password:v})});alert(r.ok?"OK":"Error "+r.status);$("npw").value=""}
+addEventListener("hashchange",()=>{render();fetch("/api/hit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({path:location.hash||"#home"})}).catch(()=>{})});render();
+fetch("/api/state").then(r=>r.json()).then(j=>{if(j&&j.site){const l=S.lang;S=Object.assign(DEF(),j);S.lang=l;render()}}).catch(()=>{});
+</script>
+</body>
+</html>
